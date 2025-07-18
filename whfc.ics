@@ -1,8 +1,8 @@
 BEGIN:VCALENDAR
 VERSION:2.0
 CALSCALE:GREGORIAN
-X-WR-CALNAME:Walton & Hersham Fixtures 2025/26
-X-WR-CALDESC:All competitive matches with kick-off times
+X-WR-CALNAME:Walton & Hersham FC Fixtures
+X-WR-CALDESC:All matches
 X-WR-TIMEZONE:Europe/LondonBEGIN:VCALENDAR
 BEGIN:VEVENT
 DTSTART:20250809T150000
