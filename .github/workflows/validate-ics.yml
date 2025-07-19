@@ -21,20 +21,20 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install icalendar library
+      - name: Install icalendar
         run: pip install icalendar
 
       - name: Validate whfc.ics
         run: |
-          python -c "
-import sys
-from icalendar import Calendar
+          python <<EOF
+          import sys
+          from icalendar import Calendar
 
-with open('whfc.ics', 'rb') as f:
-    try:
-        Calendar.from_ical(f.read())
-        print('✅ ICS file is valid.')
-    except Exception as e:
-        print('❌ Invalid ICS file:', e)
-        sys.exit(1)
-          "
+          try:
+              with open('whfc.ics', 'rb') as f:
+                  Calendar.from_ical(f.read())
+              print('✅ ICS file is valid.')
+          except Exception as e:
+              print('❌ Invalid ICS file:', e)
+              sys.exit(1)
+          EOF
