@@ -1,12 +1,13 @@
-name: Validate ICS File
+name: Validate ICS Files
 
 on:
+  workflow_dispatch:  # Allows manual triggering
   push:
     paths:
-      - 'whfc.ics'
+      - '**/*.ics'     # Any .ics file anywhere
   pull_request:
     paths:
-      - 'whfc.ics'
+      - '**/*.ics'
 
 jobs:
   validate-ics:
@@ -24,17 +25,24 @@ jobs:
       - name: Install icalendar
         run: pip install icalendar
 
-      - name: Validate whfc.ics
+      - name: Validate all .ics files
         run: |
           python <<EOF
           import sys
+          import glob
           from icalendar import Calendar
 
-          try:
-              with open('whfc.ics', 'rb') as f:
-                  Calendar.from_ical(f.read())
-              print('✅ ICS file is valid.')
-          except Exception as e:
-              print('❌ Invalid ICS file:', e)
+          failed = False
+          for filepath in glob.glob('**/*.ics', recursive=True):
+              print(f'🔍 Validating {filepath}...')
+              try:
+                  with open(filepath, 'rb') as f:
+                      Calendar.from_ical(f.read())
+                  print(f'✅ {filepath} is valid.')
+              except Exception as e:
+                  print(f'❌ {filepath} is invalid: {e}')
+                  failed = True
+
+          if failed:
               sys.exit(1)
           EOF
