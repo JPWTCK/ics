@@ -1,0 +1,103 @@
+name: Assign UIDs to changed ICS files (Node)
+
+on:
+  push:
+    paths:
+      - '**/*.ics'
+  pull_request:
+    paths:
+      - '**/*.ics'
+  workflow_dispatch:
+
+jobs:
+  assign-uids:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - name: Install dependencies
+        run: npm install ical.js glob
+
+      - name: Get changed ICS files (or all, on manual)
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            find . -type f -name '*.ics' > changed_ics_files.txt
+          else
+            git diff --name-only HEAD^ HEAD | grep '\.ics$' > changed_ics_files.txt || true
+          fi
+          echo "Changed files:"
+          cat changed_ics_files.txt || echo "No .ics files changed."
+
+      - name: Assign UIDs to VEVENTs (Node)
+        run: |
+          node -e '
+            const fs = require("fs");
+            const path = require("path");
+            const ICAL = require("ical.js");
+            const files = fs.readFileSync("changed_ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
+            files.forEach(file => {
+              if (!fs.existsSync(file)) return;
+              const basename = path.basename(file, ".ics");
+              let data;
+              try {
+                data = fs.readFileSync(file, "utf8");
+              } catch (e) {
+                console.error(`❌ Could not read ${file}:`, e.message);
+                return;
+              }
+              let jcal;
+              try {
+                jcal = ICAL.parse(data);
+              } catch (e) {
+                console.error(`❌ Error parsing ${file}:`, e.message);
+                return;
+              }
+              const vcal = new ICAL.Component(jcal);
+              // Find existing UIDs and max index
+              const existingUIDs = new Set();
+              let maxNum = 0;
+              vcal.getAllSubcomponents("vevent").forEach(vevent => {
+                const uid = vevent.getFirstPropertyValue("uid");
+                if (uid && uid.startsWith(`${basename}-`)) {
+                  const num = parseInt(uid.split("-")[1]);
+                  if (!isNaN(num)) {
+                    maxNum = Math.max(maxNum, num);
+                  }
+                  existingUIDs.add(uid);
+                }
+              });
+              // Assign UIDs
+              let nextNum = maxNum + 1;
+              let changed = false;
+              vcal.getAllSubcomponents("vevent").forEach(vevent => {
+                let uid = vevent.getFirstPropertyValue("uid");
+                if (!uid) {
+                  let candidate;
+                  do {
+                    candidate = `${basename}-${String(nextNum).padStart(4, "0")}@github.com/jpwtck/ics`;
+                    nextNum++;
+                  } while (existingUIDs.has(candidate));
+                  vevent.addPropertyWithValue("uid", candidate);
+                  existingUIDs.add(candidate);
+                  changed = true;
+                  console.log(`✅ Assigned UID: ${candidate} in ${file}`);
+                }
+              });
+              if (changed) {
+                fs.writeFileSync(file, vcal.toString(), "utf8");
+                console.log(`💾 Updated UIDs in ${file}`);
+              }
+            });
+          '
+
+      - name: Commit and push changes (if any)
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "chore: auto-assign UIDs to new VEVENTs"
+          file_pattern: '*.ics'
