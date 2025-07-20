@@ -1,0 +1,72 @@
+name: Add DTSTAMP to changed ICS files
+
+on:
+  push:
+    paths:
+      - '**/*.ics'
+  pull_request:
+    paths:
+      - '**/*.ics'
+  workflow_dispatch:
+
+jobs:
+  add-dtstamp:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install icalendar
+        run: pip install icalendar
+
+      - name: Get changed ICS files (or all, on manual)
+        id: get-files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            find . -type f -name '*.ics' > changed_ics_files.txt
+          else
+            git fetch origin ${{ github.event.before }}
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.ics$' > changed_ics_files.txt || true
+          fi
+
+      - name: Add DTSTAMP to each changed VEVENT
+        run: |
+          while read file; do
+            [ -f "$file" ] || continue
+            python3 - <<EOF
+import sys
+from datetime import datetime
+from icalendar import Calendar
+
+input_file = "$file"
+output_file = "$file.tmp"
+now = datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')
+
+with open(input_file, 'rb') as f:
+    cal = Calendar.from_ical(f.read())
+
+outcal = Calendar()
+for prop in cal.property_items():
+    outcal.add(prop[0], prop[1])
+
+for component in cal.walk():
+    if component.name == "VEVENT":
+        component['DTSTAMP'] = now
+    if component.name != "VCALENDAR":
+        outcal.add_component(component)
+
+with open(output_file, 'wb') as f:
+    f.write(outcal.to_ical())
+EOF
+            mv "$file.tmp" "$file"
+          done < changed_ics_files.txt
+
+      - name: Commit and push changes (if any)
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message:
