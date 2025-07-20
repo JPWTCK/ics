@@ -16,41 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: '3.x'
+          node-version: '22.x'
 
-      - name: Install icalendar
-        run: pip install icalendar
-
-      - name: Write add-dtstamp.py
-        run: |
-          cat > add-dtstamp.py <<'EOF'
-import sys
-from datetime import datetime
-from icalendar import Calendar
-
-input_file = sys.argv[1]
-output_file = sys.argv[2]
-now = datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')
-
-with open(input_file, 'rb') as f:
-    cal = Calendar.from_ical(f.read())
-
-outcal = Calendar()
-for prop in cal.property_items():
-    outcal.add(prop[0], prop[1])
-
-for component in cal.walk():
-    if component.name == "VEVENT":
-        component['DTSTAMP'] = now
-    if component.name != "VCALENDAR":
-        outcal.add_component(component)
-
-with open(output_file, 'wb') as f:
-    f.write(outcal.to_ical())
-EOF
+      - name: Install dependencies
+        run: npm install ical.js glob
 
       - name: Get changed ICS files (or all, on manual)
         id: get-files
@@ -60,14 +32,40 @@ EOF
           else
             git diff --name-only HEAD^ HEAD | grep '\.ics$' > changed_ics_files.txt || true
           fi
+          echo "Changed files:"
+          cat changed_ics_files.txt || echo "No .ics files changed."
 
-      - name: Add DTSTAMP to each changed VEVENT
+      - name: Add DTSTAMP to each changed VEVENT (Node)
         run: |
-          while read file; do
-            [ -f "$file" ] || continue
-            python3 add-dtstamp.py "$file" "$file.tmp"
-            mv "$file.tmp" "$file"
-          done < changed_ics_files.txt
+          node -e '
+            const fs = require("fs");
+            const glob = require("glob");
+            const ICAL = require("ical.js");
+            const dtstamp = new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z/,"Z").replace("T","T");
+            const files = fs.readFileSync("changed_ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
+            files.forEach(file => {
+              if (!fs.existsSync(file)) return;
+              let data = fs.readFileSync(file, "utf8");
+              let jcal;
+              try {
+                jcal = ICAL.parse(data);
+              } catch (e) {
+                console.error("❌ Error parsing", file, e.message);
+                return;
+              }
+              const vcal = new ICAL.Component(jcal);
+              let updated = false;
+              vcal.getAllSubcomponents("vevent").forEach(vevent => {
+                vevent.removeAllProperties("dtstamp");
+                vevent.addPropertyWithValue("dtstamp", dtstamp);
+                updated = true;
+              });
+              if (updated) {
+                fs.writeFileSync(file, vcal.toString(), "utf8");
+                console.log(`✅ Updated DTSTAMPs in ${file}`);
+              }
+            });
+          '
 
       - name: Commit and push changes (if any)
         uses: stefanzweifel/git-auto-commit-action@v4
