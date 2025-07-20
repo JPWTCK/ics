@@ -1,0 +1,73 @@
+name: Validate ICS with ICAL.js
+
+on:
+  push:
+    paths:
+      - '**/*.ics'
+  pull_request:
+    paths:
+      - '**/*.ics'
+  workflow_dispatch:
+
+jobs:
+  lint-ics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+
+      - run: npm install ical.js glob
+
+      - run: |
+          node -e '
+            const fs = require("fs");
+            const glob = require("glob");
+            const ICAL = require("ical.js");
+
+            let failed = false;
+            const files = glob.sync("**/*.ics");
+            if (files.length === 0) process.exit(0);
+
+            for (const file of files) {
+              console.log(`🔍 Checking ${file}`);
+              let data, jcal;
+              try {
+                data = fs.readFileSync(file, "utf8");
+                jcal = ICAL.parse(data);
+              } catch (e) {
+                console.error(`❌ SYNTAX ERROR in ${file}: ${e.message}`);
+                failed = true;
+                continue;
+              }
+
+              const vcal = new ICAL.Component(jcal);
+              if (!vcal.getFirstPropertyValue("prodid")) {
+                console.error(`❌ ${file}: Missing PRODID in VCALENDAR`);
+                failed = true;
+              }
+
+              for (const vevent of vcal.getAllSubcomponents("vevent")) {
+                const uid = vevent.getFirstPropertyValue("uid");
+                const dtstamp = vevent.getFirstPropertyValue("dtstamp");
+                if (!uid) {
+                  console.error(`❌ ${file}: VEVENT missing UID`);
+                  failed = true;
+                }
+                if (!dtstamp) {
+                  console.error(`❌ ${file}: VEVENT${uid ? ` ${uid}` : ""} missing DTSTAMP`);
+                  failed = true;
+                }
+              }
+            }
+
+            if (failed) {
+              process.exit(1);
+            } else {
+              console.log("✅ All .ics files passed ICAL.js RFC-5545 checks");
+            }
+          '
+```0
