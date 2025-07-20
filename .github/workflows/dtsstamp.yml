@@ -36,15 +36,13 @@ jobs:
 
       - name: Add DTSTAMP to each changed VEVENT
         run: |
-          while read file; do
-            [ -f "$file" ] || continue
-            python3 - <<EOF
+          cat > add-dtstamp.py <<'EOF'
 import sys
 from datetime import datetime
 from icalendar import Calendar
 
-input_file = "$file"
-output_file = "$file.tmp"
+input_file = sys.argv[1]
+output_file = sys.argv[2]
 now = datetime.utcnow().strftime('%Y%m%dT%H%M%SZ')
 
 with open(input_file, 'rb') as f:
@@ -63,6 +61,10 @@ for component in cal.walk():
 with open(output_file, 'wb') as f:
     f.write(outcal.to_ical())
 EOF
+
+          while read file; do
+            [ -f "$file" ] || continue
+            python3 add-dtstamp.py "$file" "$file.tmp"
             mv "$file.tmp" "$file"
           done < changed_ics_files.txt
 
