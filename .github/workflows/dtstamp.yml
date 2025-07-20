@@ -24,17 +24,7 @@ jobs:
       - name: Install icalendar
         run: pip install icalendar
 
-      - name: Get changed ICS files (or all, on manual)
-        id: get-files
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            find . -type f -name '*.ics' > changed_ics_files.txt
-          else
-            git fetch origin ${{ github.event.before }}
-            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.ics$' > changed_ics_files.txt || true
-          fi
-
-      - name: Add DTSTAMP to each changed VEVENT
+      - name: Write DTSTAMP Python script
         run: |
           cat > add-dtstamp.py <<'EOF'
 import sys
@@ -62,6 +52,18 @@ with open(output_file, 'wb') as f:
     f.write(outcal.to_ical())
 EOF
 
+      - name: Get changed ICS files (or all, on manual)
+        id: get-files
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            find . -type f -name '*.ics' > changed_ics_files.txt
+          else
+            git fetch origin ${{ github.event.before }}
+            git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.ics$' > changed_ics_files.txt || true
+          fi
+
+      - name: Add DTSTAMP to each changed VEVENT
+        run: |
           while read file; do
             [ -f "$file" ] || continue
             python3 add-dtstamp.py "$file" "$file.tmp"
