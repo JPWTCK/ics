@@ -10,21 +10,25 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint-ics:
+  validate-ics:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: '22.x'
 
-      - run: npm install ical.js glob
+      - name: Install dependencies
+        run: npm install ical.js glob
 
-      - run: |
+      - name: Parse & RFC-5545 lint
+        run: |
           node -e '
-            const fs = require("fs");
+            const fs   = require("fs");
             const glob = require("glob");
             const ICAL = require("ical.js");
 
@@ -51,7 +55,7 @@ jobs:
               }
 
               for (const vevent of vcal.getAllSubcomponents("vevent")) {
-                const uid = vevent.getFirstPropertyValue("uid");
+                const uid     = vevent.getFirstPropertyValue("uid");
                 const dtstamp = vevent.getFirstPropertyValue("dtstamp");
                 if (!uid) {
                   console.error(`❌ ${file}: VEVENT missing UID`);
@@ -70,4 +74,3 @@ jobs:
               console.log("✅ All .ics files passed ICAL.js RFC-5545 checks");
             }
           '
-```0
