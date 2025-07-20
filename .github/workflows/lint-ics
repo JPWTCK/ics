@@ -1,0 +1,41 @@
+name: Lint ICS with lint-ical
+
+on:
+  push:
+    paths:
+      - '**/*.ics'
+  pull_request:
+    paths:
+      - '**/*.ics'
+  workflow_dispatch:
+
+jobs:
+  lint-ics:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Check out your code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # 2. Set up Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      # 3. Install lint-ical
+      - name: Install lint-ical
+        run: npm install --no-package-lock --no-save lint-ical
+
+      # 4. Run lint-ical against all .ics files
+      - name: Run lint-ical
+        run: |
+          # glob each .ics file and lint it
+          for file in $(find . -type f -name '*.ics'); do
+            echo "📝 Linting $file"
+            npx lint-ical "$file" || exit 1
+          done
+
+      # 5. (Optional) Show summary or suggestions
+      #    lint-ical will print errors/warnings; the job fails if any exit non-zero.
