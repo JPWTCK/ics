@@ -12,6 +12,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -28,6 +30,11 @@ jobs:
             find . -type f -name '*.ics' > ics_files.txt
           else
             git diff --name-only HEAD^ HEAD | grep '\.ics$' > ics_files.txt || true
+            # Fallback if ics_files.txt is empty (e.g. first commit)
+            if ! [ -s ics_files.txt ]; then
+              echo "No diffable .ics files found, defaulting to all .ics files (first commit?)"
+              find . -type f -name '*.ics' > ics_files.txt
+            fi
           fi
           echo "Will update these files:"
           cat ics_files.txt || echo "No .ics files to update."
