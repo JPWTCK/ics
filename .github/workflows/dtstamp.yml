@@ -1,16 +1,13 @@
-name: Add DTSTAMP to changed ICS files
+name: Assign UIDs to ICS files (Node)
 
 on:
-  push:
-    paths:
-      - '**/*.ics'
   pull_request:
     paths:
       - '**/*.ics'
   workflow_dispatch:
 
 jobs:
-  add-dtstamp:
+  assign-uids:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,51 +21,74 @@ jobs:
       - name: Install dependencies
         run: npm install ical.js glob
 
-      - name: Get changed ICS files (or all, on manual)
-        id: get-files
+      - name: Get target ICS files
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            find . -type f -name '*.ics' > changed_ics_files.txt
+            find . -type f -name '*.ics' > ics_files.txt
           else
-            git diff --name-only HEAD^ HEAD | grep '\.ics$' > changed_ics_files.txt || true
+            git diff --name-only origin/${{ github.base_ref }}...HEAD | grep '\.ics$' > ics_files.txt || true
           fi
-          echo "Changed files:"
-          cat changed_ics_files.txt || echo "No .ics files changed."
+          echo "ICS files to process:"
+          cat ics_files.txt || echo "No .ics files found."
 
-      - name: Add DTSTAMP to each changed VEVENT (Node)
+      - name: Assign UIDs to VEVENTs (Node)
         run: |
           node -e '
             const fs = require("fs");
-            const glob = require("glob");
+            const path = require("path");
             const ICAL = require("ical.js");
-            const dtstamp = new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z/,"Z").replace("T","T");
-            const files = fs.readFileSync("changed_ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
+            const files = fs.readFileSync("ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
             files.forEach(file => {
               if (!fs.existsSync(file)) return;
-              let data = fs.readFileSync(file, "utf8");
+              const basename = path.basename(file, ".ics");
+              let data;
+              try {
+                data = fs.readFileSync(file, "utf8");
+              } catch (e) {
+                console.error(`❌ Could not read ${file}:`, e.message);
+                return;
+              }
               let jcal;
               try {
                 jcal = ICAL.parse(data);
               } catch (e) {
-                console.error("❌ Error parsing", file, e.message);
+                console.error(`❌ Error parsing ${file}:`, e.message);
                 return;
               }
               const vcal = new ICAL.Component(jcal);
-              let updated = false;
+              // Find existing UIDs and max index
+              const existingUIDs = new Set();
+              let maxNum = 0;
               vcal.getAllSubcomponents("vevent").forEach(vevent => {
-                vevent.removeAllProperties("dtstamp");
-                vevent.addPropertyWithValue("dtstamp", dtstamp);
-                updated = true;
+                const uid = vevent.getFirstPropertyValue("uid");
+                if (uid && uid.startsWith(`${basename}-`)) {
+                  const num = parseInt(uid.split("-")[1]);
+                  if (!isNaN(num)) {
+                    maxNum = Math.max(maxNum, num);
+                  }
+                  existingUIDs.add(uid);
+                }
               });
-              if (updated) {
+              // Assign UIDs
+              let nextNum = maxNum + 1;
+              let changed = false;
+              vcal.getAllSubcomponents("vevent").forEach(vevent => {
+                let uid = vevent.getFirstPropertyValue("uid");
+                if (!uid) {
+                  let candidate;
+                  do {
+                    candidate = `${basename}-${String(nextNum).padStart(4, "0")}@github.com/jpwtck/ics`;
+                    nextNum++;
+                  } while (existingUIDs.has(candidate));
+                  vevent.addPropertyWithValue("uid", candidate);
+                  existingUIDs.add(candidate);
+                  changed = true;
+                  console.log(`✅ Assigned UID: ${candidate} in ${file}`);
+                }
+              });
+              if (changed) {
                 fs.writeFileSync(file, vcal.toString(), "utf8");
-                console.log(`✅ Updated DTSTAMPs in ${file}`);
+                console.log(`💾 Updated UIDs in ${file}`);
               }
             });
           '
-
-      - name: Commit and push changes (if any)
-        uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          commit_message: "chore: auto-update DTSTAMP on changed VEVENTs"
-          file_pattern: '*.ics'
