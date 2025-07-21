@@ -42,10 +42,20 @@ jobs:
       - name: Update DTSTAMP in selected ICS files
         run: |
           node -e '
+            function formatICalDateUTC(d) {
+              return d.getUTCFullYear().toString().padStart(4, "0") +
+                (d.getUTCMonth() + 1).toString().padStart(2, "0") +
+                d.getUTCDate().toString().padStart(2, "0") +
+                "T" +
+                d.getUTCHours().toString().padStart(2, "0") +
+                d.getUTCMinutes().toString().padStart(2, "0") +
+                d.getUTCSeconds().toString().padStart(2, "0") +
+                "Z";
+            }
             const fs = require("fs");
             const ICAL = require("ical.js");
             const files = fs.readFileSync("ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
-            const dtstamp = new Date();
+            const dtstamp = formatICalDateUTC(new Date());
             files.forEach(file => {
               if (!fs.existsSync(file)) return;
               let data = fs.readFileSync(file, "utf8");
@@ -64,6 +74,7 @@ jobs:
               }
             });
           '
+
 
       - name: Validate DTSTAMP in selected ICS files
         run: |
