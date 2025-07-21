@@ -38,7 +38,7 @@ jobs:
           fi
           echo "Will update these files:"
           cat ics_files.txt || echo "No .ics files to update."
-
+          
       - name: Update DTSTAMP in selected ICS files
         run: |
           node -e '
@@ -46,16 +46,16 @@ jobs:
             const ICAL = require("ical.js");
             const files = fs.readFileSync("ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
             const now = new Date();
-            const dtstamp = new ICAL.Time(
-              now.getUTCFullYear(),
-              now.getUTCMonth() + 1,
-              now.getUTCDate(),
-              now.getUTCHours(),
-              now.getUTCMinutes(),
-              now.getUTCSeconds(),
-              false // UTC, not floating
-            );
-            dtstamp.zone = ICAL.Timezone.utcTimezone;
+            const dtstamp = new ICAL.Time({
+              year: now.getUTCFullYear(),
+              month: now.getUTCMonth() + 1,
+              day: now.getUTCDate(),
+              hour: now.getUTCHours(),
+              minute: now.getUTCMinutes(),
+              second: now.getUTCSeconds(),
+              isDate: false,
+              zone: ICAL.Timezone.utcTimezone
+            });
             files.forEach(file => {
               if (!fs.existsSync(file)) return;
               let data = fs.readFileSync(file, "utf8");
