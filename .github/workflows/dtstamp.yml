@@ -30,7 +30,6 @@ jobs:
             find . -type f -name '*.ics' > ics_files.txt
           else
             git diff --name-only HEAD^ HEAD | grep '\.ics$' > ics_files.txt || true
-            # Fallback if ics_files.txt is empty (e.g. first commit)
             if ! [ -s ics_files.txt ]; then
               echo "No diffable .ics files found, defaulting to all .ics files (first commit?)"
               find . -type f -name '*.ics' > ics_files.txt
@@ -63,6 +62,34 @@ jobs:
                 console.log(`💾 Updated DTSTAMPs in ${file}`);
               }
             });
+          '
+
+      - name: Validate DTSTAMP in selected ICS files
+        run: |
+          node -e '
+            const fs = require("fs");
+            const files = fs.readFileSync("ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
+            let failed = false;
+            files.forEach(file => {
+              if (!fs.existsSync(file)) return;
+              let data;
+              try { data = fs.readFileSync(file, "utf8"); } catch (e) { return; }
+              let jcal;
+              try { jcal = require("ical.js").parse(data); } catch (e) { 
+                console.error(`❌ Error parsing ${file}: ${e.message}`); 
+                failed = true; return; 
+              }
+              const vcal = new (require("ical.js").Component)(jcal);
+              vcal.getAllSubcomponents("vevent").forEach(vevent => {
+                const dtstamp = vevent.getFirstPropertyValue("dtstamp");
+                if (!dtstamp) {
+                  console.error(`❌ ${file}: VEVENT missing DTSTAMP`);
+                  failed = true;
+                }
+              });
+            });
+            if (failed) process.exit(1);
+            else console.log("✅ All processed VEVENTs have DTSTAMP");
           '
 
       - name: Create Pull Request with DTSTAMP fixes
