@@ -5,357 +5,356 @@ PRODID:-//github.com/jpwtck/ics//Walton & Hersham FC Fixtures//EN
 X-WR-CALNAME:Walton & Hersham FC Fixtures
 X-WR-CALDESC:All matches
 X-WR-TIMEZONE:Europe/London
-
 BEGIN:VEVENT
 DTSTART:20250809T150000
 DTEND:20250809T170000
 SUMMARY:W&H vs Plymouth Parkway
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0001@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20250812T194500
 DTEND:20250812T214500
 SUMMARY:Hanwell Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0002@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20250816T150000
 DTEND:20250816T170000
 SUMMARY:W&H vs Dorchester
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0003@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20250823T150000
 DTEND:20250823T170000
 SUMMARY:W&H vs Taunton Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0004@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20250825T194500
 DTEND:20250825T214500
 SUMMARY:Gosport B’oro vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0005@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20250830T150000
 DTEND:20250830T170000
 SUMMARY:FA Cup 1QF vs W&H
 LOCATION:TBC
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0006@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20250906T150000
 DTEND:20250906T170000
 SUMMARY:W&H vs Evesham Utd
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0007@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20250909T194500
 DTEND:20250909T214500
 SUMMARY:W&H vs Sholing
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0008@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20250920T150000
 DTEND:20250920T170000
 SUMMARY:Bracknell Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0009@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20250923T194500
 DTEND:20250923T214500
 SUMMARY:Berkhamsted vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0010@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251004T150000
 DTEND:20251004T170000
 SUMMARY:FA Trophy 3QF vs W&H
 LOCATION:TBC
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0011@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251011T150000
 DTEND:20251011T170000
 SUMMARY:W&H vs Wimborne Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0012@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251014T194500
 DTEND:20251014T214500
 SUMMARY:W&H vs Havant & W’ville
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0013@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251018T150000
 DTEND:20251018T170000
 SUMMARY:Yate Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0014@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251021T194500
 DTEND:20251021T214500
 SUMMARY:Farnham Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0015@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251101T150000
 DTEND:20251101T170000
 SUMMARY:W&H vs Tiverton Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0016@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251108T150000
 DTEND:20251108T170000
 SUMMARY:W&H vs Weymouth
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0017@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251115T150000
 DTEND:20251115T170000
 SUMMARY:Poole Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0018@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251118T194500
 DTEND:20251118T214500
 SUMMARY:Sholing vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0019@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251122T150000
 DTEND:20251122T170000
 SUMMARY:W&H vs Hungerford T
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0020@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251125T194500
 DTEND:20251125T214500
 SUMMARY:W&H vs Berkhamsted
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0021@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251129T150000
 DTEND:20251129T170000
 SUMMARY:Basingstoke T vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0022@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251206T150000
 DTEND:20251206T170000
 SUMMARY:Uxbridge vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0023@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251213T150000
 DTEND:20251213T170000
 SUMMARY:W&H vs Gloucester City
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0024@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251220T150000
 DTEND:20251220T170000
 SUMMARY:W&H vs Hanwell Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0025@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20251227T150000
 DTEND:20251227T170000
 SUMMARY:Chertsey Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0026@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260103T150000
 DTEND:20260103T170000
 SUMMARY:W&H vs Gosport B’oro
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0027@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260110T150000
 DTEND:20260110T170000
 SUMMARY:Plymouth P’way vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0028@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260117T150000
 DTEND:20260117T170000
 SUMMARY:Weymouth vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0029@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260124T150000
 DTEND:20260124T170000
 SUMMARY:W&H vs Poole Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0030@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260131T150000
 DTEND:20260131T170000
 SUMMARY:Wimborne Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0031@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260207T150000
 DTEND:20260207T170000
 SUMMARY:W&H vs Bracknell Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0032@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260214T194500
 DTEND:20260214T214500
 SUMMARY:Hungerford Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0033@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260221T150000
 DTEND:20260221T170000
 SUMMARY:W&H vs Basingstoke T
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0034@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260228T150000
 DTEND:20260228T170000
 SUMMARY:W&H vs Yate Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0035@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260307T150000
 DTEND:20260307T170000
 SUMMARY:Havant & W’ville vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0036@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260314T150000
 DTEND:20260314T170000
 SUMMARY:W&H vs Farnham Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0037@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260321T150000
 DTEND:20260321T170000
 SUMMARY:Tiverton Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0038@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260328T150000
 DTEND:20260328T170000
 SUMMARY:W&H vs Dorchester Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0039@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260403T194500
 DTEND:20260403T214500
 SUMMARY:Taunton Town vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0040@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260406T194500
 DTEND:20260406T214500
 SUMMARY:W&H vs Chertsey Town
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 19:45.
+UID:whfc-0041@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260411T150000
 DTEND:20260411T170000
 SUMMARY:Evesham United vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0042@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260418T150000
 DTEND:20260418T170000
 SUMMARY:W&H vs Uxbridge
 LOCATION:HOME
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0043@github.com/jpwtck/ics
 END:VEVENT
-
 BEGIN:VEVENT
 DTSTART:20260425T150000
 DTEND:20260425T170000
 SUMMARY:Gloucester City vs W&H
 LOCATION:AWAY
 DESCRIPTION:Southern League Premier South fixture. Kick-off at 15:00.
+UID:whfc-0044@github.com/jpwtck/ics
 END:VEVENT
-
 END:VCALENDAR
