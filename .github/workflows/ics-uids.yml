@@ -1,16 +1,13 @@
-name: Assign UIDs to changed ICS files (Node)
+name: Auto-assign UID to VEVENTs
 
 on:
   push:
-    paths:
-      - '**/*.ics'
-  pull_request:
-    paths:
-      - '**/*.ics'
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  assign-uids:
+  update-uid:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,40 +21,30 @@ jobs:
       - name: Install dependencies
         run: npm install ical.js glob
 
-      - name: Get changed ICS files (or all, on manual)
+      - name: Determine which ICS files to process
+        id: files
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            find . -type f -name '*.ics' > changed_ics_files.txt
+            find . -type f -name '*.ics' > ics_files.txt
           else
-            git diff --name-only HEAD^ HEAD | grep '\.ics$' > changed_ics_files.txt || true
+            git diff --name-only HEAD^ HEAD | grep '\.ics$' > ics_files.txt || true
           fi
-          echo "Changed files:"
-          cat changed_ics_files.txt || echo "No .ics files changed."
+          echo "Will update these files:"
+          cat ics_files.txt || echo "No .ics files to update."
 
-      - name: Assign UIDs to VEVENTs (Node)
+      - name: Assign UIDs in selected ICS files
         run: |
           node -e '
             const fs = require("fs");
             const path = require("path");
             const ICAL = require("ical.js");
-            const files = fs.readFileSync("changed_ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
+            const files = fs.readFileSync("ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
             files.forEach(file => {
               if (!fs.existsSync(file)) return;
               const basename = path.basename(file, ".ics");
-              let data;
-              try {
-                data = fs.readFileSync(file, "utf8");
-              } catch (e) {
-                console.error(`❌ Could not read ${file}:`, e.message);
-                return;
-              }
+              let data = fs.readFileSync(file, "utf8");
               let jcal;
-              try {
-                jcal = ICAL.parse(data);
-              } catch (e) {
-                console.error(`❌ Error parsing ${file}:`, e.message);
-                return;
-              }
+              try { jcal = ICAL.parse(data); } catch (e) { return; }
               const vcal = new ICAL.Component(jcal);
               // Find existing UIDs and max index
               const existingUIDs = new Set();
@@ -96,8 +83,12 @@ jobs:
             });
           '
 
-      - name: Commit and push changes (if any)
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Create Pull Request with UID fixes
+        uses: peter-evans/create-pull-request@v6
         with:
-          commit_message: "chore: auto-assign UIDs to new VEVENTs"
-          file_pattern: '*.ics'
+          commit-message: "chore: auto-assign UID to new VEVENTs"
+          title: "Auto-assign UID to new VEVENTs"
+          body: "This PR assigns UID to all VEVENTs missing a UID for RFC compliance."
+          branch: auto/update-uid-${{ github.run_id }}
+          base: main
+          add-paths: '*.ics'
