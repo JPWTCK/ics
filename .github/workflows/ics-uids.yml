@@ -90,6 +90,34 @@ jobs:
             });
           '
 
+      - name: Validate UIDs in selected ICS files
+        run: |
+          node -e '
+            const fs = require("fs");
+            const files = fs.readFileSync("ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
+            let failed = false;
+            files.forEach(file => {
+              if (!fs.existsSync(file)) return;
+              let data;
+              try { data = fs.readFileSync(file, "utf8"); } catch (e) { return; }
+              let jcal;
+              try { jcal = require("ical.js").parse(data); } catch (e) { 
+                console.error(`❌ Error parsing ${file}: ${e.message}`); 
+                failed = true; return; 
+              }
+              const vcal = new (require("ical.js").Component)(jcal);
+              vcal.getAllSubcomponents("vevent").forEach(vevent => {
+                const uid = vevent.getFirstPropertyValue("uid");
+                if (!uid) {
+                  console.error(`❌ ${file}: VEVENT missing UID`);
+                  failed = true;
+                }
+              });
+            });
+            if (failed) process.exit(1);
+            else console.log("✅ All processed VEVENTs have UID");
+          '
+
       - name: Create Pull Request with UID fixes
         uses: peter-evans/create-pull-request@v6
         with:
