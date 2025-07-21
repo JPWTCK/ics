@@ -30,6 +30,7 @@ jobs:
             find . -type f -name '*.ics' > ics_files.txt
           else
             git diff --name-only HEAD^ HEAD | grep '\.ics$' > ics_files.txt || true
+            # Fallback if ics_files.txt is empty (e.g. first commit)
             if ! [ -s ics_files.txt ]; then
               echo "No diffable .ics files found, defaulting to all .ics files (first commit?)"
               find . -type f -name '*.ics' > ics_files.txt
@@ -44,7 +45,7 @@ jobs:
             const fs = require("fs");
             const ICAL = require("ical.js");
             const files = fs.readFileSync("ics_files.txt", "utf-8").split("\n").filter(f => f.trim());
-            const dtstamp = new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z/,"Z").replace("T","T");
+            const dtstamp = new Date();
             files.forEach(file => {
               if (!fs.existsSync(file)) return;
               let data = fs.readFileSync(file, "utf8");
